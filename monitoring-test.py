@@ -1,12 +1,14 @@
 import requests
 import json
 
+# only ger null
+null = None
 
 # for local test, use http://127.0.0.1:[ PORTA ]/webhook
 # for Cloud Functions test, use endpoint threshold.
-webhook_url = 'https://us-central1-observability-330418.cloudfunctions.net/function-webhook/webhook'
+webhook_url = 'https://127.0.0.1:5000/webhook'
 # https://cloud.google.com/monitoring/support/notification-options#webhooks
-data =   {
+dataV1_2 =   {
      "incident": {
        "incident_id": "0.opqiw61fsv7p",
        "resource_id": "11223344",
@@ -57,9 +59,25 @@ data =   {
        },
        "state": "closed",
        "started_at": 1577840461,
-       "ended_at": 1577877071,
+       "ended_at": null,
        "summary": "CPU utilization for internal-project gke-cluster-1-16-default-pool-e2df4cbd-dgp3 with metric labels {instance_name=gke-cluster-1-default-pool-e2df4cbd-dgp3} and system labels {state=ACTIVE} returned to normal with a value of 0.835."
      },
      "version": "1.2"
    }
-r = requests.post(webhook_url, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+dataV1_1 = {
+    "incident": {
+      "incident_id": "f2e08c333dc64cb09f75eaab355393bz",
+      "resource_id": "i-4a266a2d",
+      "resource_name": "webserver-85",
+      "state": "open",
+      "started_at": 1385085727,
+      "ended_at": null,
+      "policy_name": "Webserver Health",
+      "condition_name": "CPU usage",
+      "errors": [{ "error": { "code": 500, "status": "INTERNAL", "message": "Failed to render as 1.2; downgrading to 1.1."} }],
+      "url": "https://console.cloud.google.com/monitoring/alerting/incidents?project=PROJECT_ID",
+      "summary": "CPU for webserver-85 is above the threshold of 1% with a value of 28.5%"
+    },
+    "version": "1.1"
+   }
+r = requests.post(webhook_url, data=json.dumps(dataV1_2), headers={'Content-Type': 'application/json'})
