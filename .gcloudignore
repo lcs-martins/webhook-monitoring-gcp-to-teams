@@ -1,0 +1,6 @@
+.env
+monitoring-test.py
+teams-test.py
+.gitignore
+cloudbuild.yaml
+.env.yaml

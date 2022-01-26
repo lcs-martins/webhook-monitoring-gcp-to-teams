@@ -3,12 +3,18 @@ import requests
 import json
 from copy import deepcopy
 from datetime import datetime
+import os
+
+# WEBHOOK_TEAMS_URL   = 'incoming-webhook-link.com'
+# NOTIFY_LIST         = {
+#     'Pessoa Humano'  : 'pessoa.humano@mail.com',
+#     'Humano Pessoa'  : 'humano.pessoa@mail.com'
+# }
+
 
 # RECEIVE VIA ENV VARS IN CLOUD FUNCTION
-WEBHOOK_TEAMS_URL   = 'INCOMING WEBHOOK TEAMS URL'
-NOTIFY_LIST         = {
-    'Hello My' : 'my@hello.com'
-}
+WEBHOOK_TEAMS_URL = os.environ.get('WEBHOOK_TEAMS_URL')
+NOTIFY_LIST       = json.loads(os.environ.get('NOTIFY_LIST'))
 
 app = Flask(__name__)
 
@@ -38,15 +44,15 @@ def gerAdaptiveCard(data):
     MENTIONS            = NOTIFY_LIST
     MENTIONS_block      = list()
 
-    # ger alert mentions
-    MENTIONS_ids = 'Atenção!!! '
+    # generate alert mentions
+    MENTIONS_ids = 'Attetion!!! '
     MENTIONS_template = \
                         {
                             "type": "mention",
                             "text": "<at>mention1</at>", 
                             "mentioned": { 
-                                "id": "SOUUO A ID lucas.lopes@somagrupo.com.br",
-                                "name": "SOU A NAME Lucas Lopes"
+                                "id": "ID",
+                                "name": "NAME"
                             }
                         }
 
@@ -64,7 +70,7 @@ def gerAdaptiveCard(data):
         # VARS CONSTRUCT VERSION 1.2
         #
 
-        # ger alert title
+        # generate alert title
         ALERT_NAME          = \
             "[" + data['incident']['state'].upper() + "]" \
             + " " + data['incident']['metric']['displayName'] \
@@ -73,7 +79,7 @@ def gerAdaptiveCard(data):
 
         AdaptiveCard['attachments'][0]['content']['body'][0]['text'] = ALERT_NAME
         
-        # ger alert properties
+        # generate alert properties
         FACTSET             = \
                         {
                             'Recurso':  data['incident']['resource_display_name'],
@@ -99,7 +105,7 @@ def gerAdaptiveCard(data):
             
             FACTSET_list.append(deepcopy(FACTSET_template))
 
-        # ger alert link
+        # generate alert link
         URL_ALERT = data['incident']['url']
 
     elif ALERT_VERSION == '1.1':
@@ -107,7 +113,7 @@ def gerAdaptiveCard(data):
         # VARS CONSTRUCT VERSION 1.1
         #
 
-        # ger alert title
+        # generate alert title
         ALERT_NAME          = \
             "[" + data['incident']['state'].upper() + "]" \
             + " " + data['incident']['condition_name'] \
@@ -115,7 +121,7 @@ def gerAdaptiveCard(data):
         
         AdaptiveCard['attachments'][0]['content']['body'][0]['text'] = ALERT_NAME
 
-        # ger alert properties
+        # generate alert properties
         FACTSET             = \
                         {
                             'Recurso':  data['incident']['resource_name'],
@@ -137,14 +143,14 @@ def gerAdaptiveCard(data):
             
             FACTSET_list.append(deepcopy(FACTSET_template))
 
-        # ger alert link
+        # generate alert link
         URL_ALERT = data['incident']['url']
 
     else:
         print('ERROR: json monitoring version not parameterized. Check Google Monitoring doc for information.')
 
     #
-    # Ger values for AdaptiveCard template
+    # generate values for AdaptiveCard template
     #
 
     AdaptiveCard['attachments'][0]['content']['body'][1]['text']        = MENTIONS_ids

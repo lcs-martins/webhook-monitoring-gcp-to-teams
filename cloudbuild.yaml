@@ -1,0 +1,15 @@
+# do this for build
+# gcloud builds submit --project=some-project
+steps:
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - functions
+  - deploy
+  - change-my-name
+  - --runtime=python39
+  - --region=us-central1
+  - --env-vars-file=.env.yaml
+  - --entry-point=webhook
+  - --source=.
+  - --trigger-http
